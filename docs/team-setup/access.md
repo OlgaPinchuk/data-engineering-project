@@ -12,7 +12,7 @@
 
 ## 📊 BigQuery Dataset: `team_weather_ml_raw`
 
-| Name                  =| Identity                                                          | IAM Role                      | Level   | Description                          |
+| Name                  | Identity                                                          | IAM Role                      | Level   | Description                          |
 |----------------------|---------------------------------------------------------------------|-------------------------------|---------|--------------------------------------|
 | Mariia Sauta         | ugabitan@gmail.com                                                  | roles/bigquery.dataEditor     | Dataset | Can insert, update, and delete data  |
 |                      |                                                                     | roles/bigquery.jobUser        | Dataset | Can run queries and jobs in BigQuery |
