@@ -1,2 +1,38 @@
-service-account-key.json
+# Secrets and environment data
 .env
+*.env
+service-account-key.json
+*.pem
+*.key
+
+# Python
+__pycache__/
+*.py[cod]
+*.so
+venv/
+env/
+.Python
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs and temporary files
+*.log
+*.tmp
+*.pid
+
+# Data 
+data/raw/*
+data/processed/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+
+# Docker
+.dockerignore
