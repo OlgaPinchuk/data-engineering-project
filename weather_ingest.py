@@ -1,4 +1,6 @@
-import os, json, datetime as dt
+import os
+import json
+import datetime as dt
 import requests
 
 API_KEY   = os.environ["API_KEY"]
