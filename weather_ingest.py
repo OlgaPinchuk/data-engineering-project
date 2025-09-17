@@ -13,7 +13,7 @@ def fetch_weather(location: str, date: str) -> dict:
     return response.json()
 
 def write_weather(data: dict):
-    with open("weather.json", "w", encoding="utf-8") as f:
+    with open("weather_raw.json", "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False)
 
 def main():
