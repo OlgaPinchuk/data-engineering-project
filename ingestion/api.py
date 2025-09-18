@@ -45,7 +45,6 @@ class DataPipeline:
             response.raise_for_status()
 
             data = response.json()
-            print(data)
 
             logger.info(f"Successfully fetched {len(data)} records")
             return data
@@ -65,8 +64,7 @@ class DataPipeline:
 
             # Configure load job
             job_config = bigquery.LoadJobConfig(
-                write_disposition="WRITE_APPEND",
-                autodetect=True,  # Use predefined schema
+                write_disposition="WRITE_APPEND", autodetect=True
             )
 
             # Upload data
