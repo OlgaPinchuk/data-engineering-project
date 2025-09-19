@@ -1,12 +1,13 @@
 import os
-import datetime as dt
+import json
+from datetime import datetime, date, timezone
+
 import logging
+from typing import Any, Dict
 import requests
 
 from google.cloud import bigquery
-
-import pandas as pd
-
+from google.api_core.exceptions import GoogleAPIError
 
 from dotenv import load_dotenv
 
@@ -15,7 +16,8 @@ load_dotenv()
 
 API_KEY = os.environ["API_KEY"]
 LOCATION = os.environ.get("LOCATION", "Stockholm")
-DATE = os.environ.get("DATE", dt.date.today().isoformat())
+DATE = os.environ.get("DATE", date.today().isoformat())
+URL = "https://api.weatherapi.com/v1/history.json"
 
 
 # Set up logging
@@ -35,53 +37,90 @@ class DataPipeline:
 
         logger.info(f"Pipeline initialized for project: {self.project_id}")
 
-    def fetch_data(self):
+    def build_source_url(self, location: str, date: str) -> str:
+        return f"{URL}?q={location}&dt={date}"
+
+    def fetch_data(self) -> Dict[str, Any]:
         """Fetch data from external API"""
+        params = {"key": API_KEY, "q": LOCATION, "dt": DATE}
+
         try:
-            logger.info("Fetching data from Weather API...")
-            url = "https://api.weatherapi.com/v1/history.json"
-            params = {"key": API_KEY, "q": LOCATION, "dt": DATE}
-            response = requests.get(url, params=params, timeout=30)
+            logger.info(f"Fetching data for {LOCATION} on {DATE}...")
+            response = requests.get(URL, params=params, timeout=30)
             response.raise_for_status()
 
-            data = response.json()
+            try:
+                data = response.json()
+            except ValueError as json_err:
+                logger.error("Failed to parse JSON response.")
+                raise ValueError("Invalid JSON response") from json_err
+
+            if not data:
+                raise ValueError("Empty response from API")
 
             logger.info(f"Successfully fetched {len(data)} records")
             return data
 
-        except requests.RequestException as e:
-            logger.error(f"Error fetching data: {e}")
+        except requests.Timeout:
+            logger.error("Request to API timed out.")
+            raise
+        except requests.HTTPError as http_err:
+            logger.error(f"HTTP error occurred: {http_err} - Response: {response.text}")
+            raise
+        except requests.RequestException as req_err:
+            logger.error(f"Error fetching data from API: {req_err}")
             raise
 
-    def upload_to_bigquery(self, data):
-        """Upload data to BigQuery table"""
-        table_ref = self.client.dataset(self.dataset_id).table(self.table_id)
+    def record_exists(self, source_url: str) -> bool:
+        """Checks if a record for the given source_url already exists in BigQuery"""
+        query = f"""
+            SELECT COUNT(*) as count
+            FROM `{self.project_id}.{self.dataset_id}.{self.table_id}`
+            WHERE source_url = @source_url
+        """
+
+        job_config = bigquery.QueryJobConfig(
+            query_parameters=[
+                bigquery.ScalarQueryParameter("source_url", "STRING", source_url)
+            ]
+        )
+
+        logger.info("Checking if record already exists in BigQuery...")
+
+        query_job = self.client.query(query, job_config=job_config)
+        result = query_job.result()
+
+        count = next(result).count
+        exists = count > 0
+
+        logger.info(f"Record exists: {exists}")
+        return exists
+
+    def write_raw(
+        self, payload: Dict[str, Any], source_url: str, fetched_at: str
+    ) -> Dict[str, Any]:
+        """Writes raw payload into BigQuery with metadata."""
+        table_id = self.client.dataset(self.dataset_id).table(self.table_id)
+
+        row = {
+            "raw_json": json.dumps(payload, ensure_ascii=False),
+            "source_url": source_url,
+            "fetched_at": fetched_at,
+        }
+        row_id = f"{source_url}:{fetched_at}"
+        logger.info(f"Writing row to {table_id}")
 
         try:
-            # Convert to DataFrame
-            df = pd.DataFrame(data)
-            logger.info(f"Prepared {len(df)} records for upload")
+            errors = self.client.insert_rows_json(table_id, [row], row_ids=[row_id])
+            if errors:
+                logger.error(f"BigQuery insert errors: {errors}")
+                raise GoogleAPIError(f"BigQuery insert failed: {errors}")
 
-            # Configure load job
-            job_config = bigquery.LoadJobConfig(
-                write_disposition="WRITE_APPEND", autodetect=True
-            )
+            logger.info("Row successfully inserted into BigQuery.")
+            return {"table": table_id, "inserted": 1}
 
-            # Upload data
-            logger.info("Starting BigQuery upload...")
-            job = self.client.load_table_from_dataframe(
-                df, table_ref, job_config=job_config
-            )
-
-            # Wait for completion
-            job.result()
-
-            # Get updated table info
-            table = self.client.get_table(table_ref)
-            logger.info(f"Upload complete! Table now has {table.num_rows} total rows")
-
-        except Exception as e:
-            logger.error(f"Error uploading to BigQuery: {e}")
+        except GoogleAPIError as e:
+            logger.exception("BigQuery insert failed.")
             raise
 
     def run_pipeline(self):
@@ -92,14 +131,25 @@ class DataPipeline:
             logger.info("=" * 50)
 
             # Fetch data
-            data = self.fetch_data()
+            payload = self.fetch_data()
+            fetched_at = datetime.now(timezone.utc).isoformat()
+            source_url = self.build_source_url(LOCATION, DATE)
+
+            # Check if data already exists
+            if self.record_exists(source_url):
+                logger.info("Data already exists in BigQuery. Skipping insert.")
+                return {
+                    "status": "skipped",
+                    "reason": "Record already exists",
+                    "location": LOCATION,
+                    "date": DATE,
+                }
 
             # Upload to BigQuery
-            self.upload_to_bigquery(data)
+            logger.info("Writing to BigQuery")
+            result = self.write_raw(payload, source_url, fetched_at)
 
-            logger.info("=" * 50)
-            logger.info("Pipeline completed successfully!")
-            logger.info("=" * 50)
+            return {"status": "ok", "location": LOCATION, "date": DATE, **result}
 
         except Exception as e:
             logger.error(f"Pipeline failed: {e}")
