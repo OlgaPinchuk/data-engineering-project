@@ -1,6 +1,6 @@
 import os
 import json
-from datetime import datetime, date, timezone
+from datetime import datetime, date, timezone, timedelta
 
 import logging
 from typing import Any, Dict
@@ -16,7 +16,8 @@ load_dotenv()
 
 API_KEY = os.environ["API_KEY"]
 LOCATION = os.environ.get("LOCATION", "Stockholm")
-DATE = os.environ.get("DATE", date.today().isoformat())
+DATE = os.environ.get("DATE", (date.today() - timedelta(days=1)).isoformat())
+
 URL = "https://api.weatherapi.com/v1/history.json"
 
 
