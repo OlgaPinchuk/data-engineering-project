@@ -24,12 +24,11 @@ steps:
       - '--task-timeout=600'
 
 substitutions:
-  _AR_REPO: 'europe-north2-docker.pkg.dev/team-weather-ml-project/ingestion-pipepline'
+  _AR_REPO: 'europe-north2-docker.pkg.dev/team-weather-ml-project/ingestion-pipeline'
   _REGION: 'europe-north2'
   _LOCATION: '59.3293,18.0686'
   _BQ_DATASET: 'team_weather_ml_raw'
   _BQ_TABLE: 'weather_data'
 
 options:
-  logging: CLOUD_LOGGING_ONLY
   logging: CLOUD_LOGGING_ONLY
