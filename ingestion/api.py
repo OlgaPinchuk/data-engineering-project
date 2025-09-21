@@ -37,6 +37,7 @@ class DataPipeline:
         self.table_id = os.environ.get("BQ_TABLE_ID", "weather_data")
 
         logger.info(f"Pipeline initialized for project: {self.project_id}")
+        logger.info(f"Will use BQ dataset: {self.dataset_id}, table: {self.table_id}")
 
     def build_source_url(self, location: str, date: str) -> str:
         return f"{URL}?q={location}&dt={date}"
