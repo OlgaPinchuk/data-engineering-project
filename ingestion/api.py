@@ -31,7 +31,7 @@ logger = logging.getLogger(__name__)
 class DataPipeline:
     def __init__(self):
         """Initialize the data pipeline with BigQuery client and configuration"""
-        self.client = bigquery.Client()
+        self.client = bigquery.Client(project=os.environ["GCP_PROJECT_ID"])
         self.project_id = os.environ.get("GCP_PROJECT_ID")
         self.dataset_id = os.environ.get("BQ_DATASET_ID")
         self.table_id = os.environ.get("BQ_TABLE_ID", "weather_data")
