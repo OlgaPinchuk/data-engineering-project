@@ -22,7 +22,7 @@ steps:
       - 'weather-ingestion-job'
       - '--image=${_AR_REPO}/weather-job:$BUILD_ID'
       - '--region=${_REGION}'
-      - '--set-env-vars=LOCATION=${_LOCATION},BQ_DATASET=${_BQ_DATASET},BQ_TABLE=${_BQ_TABLE}'
+      - '--set-env-vars=LOCATION=${_LOCATION},BQ_DATASET=${_BQ_DATASET},BQ_TABLE=${_BQ_TABLE},GCP_PROJECT_ID=${PROJECT_ID}',
       - '--set-secrets=API_KEY=API_KEY:latest'
       - '--cpu=1'
       - '--memory=512Mi'
@@ -34,6 +34,7 @@ substitutions:
   _LOCATION: 'Stockholm'
   _BQ_DATASET: 'team_weather_ml_raw'
   _BQ_TABLE: 'weather_data'
+  PROJECT_ID: 'team-weather-ml-project'
 
 options:
   logging: CLOUD_LOGGING_ONLY
