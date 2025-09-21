@@ -1,17 +1,5 @@
 steps:
-  #- name: python:3.11
-  #  entrypoint: python
-  #  args: ["ingestion/api.py"]
-
-  #- name: python:3.11
-  #  entrypoint: bash
-  #  args:
-  #    - -c
-  #    - |
-  #      pip install --no-cache-dir -r requirements.txt
-  #     python ingestion/api.py
-
-    
+  
   - name: 'gcr.io/cloud-builders/docker'
     args: [
       'build', 
