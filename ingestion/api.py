@@ -121,7 +121,7 @@ class DataPipeline:
             logger.info("Row successfully inserted into BigQuery.")
             return {"table": table_id, "inserted": 1}
 
-        except GoogleAPIError as e:
+        except GoogleAPIError:
             logger.exception("BigQuery insert failed.")
             raise
 
