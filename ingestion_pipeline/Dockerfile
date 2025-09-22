@@ -4,11 +4,11 @@ FROM python:3.11-slim
 WORKDIR /app
 
 # Install dependencies
-COPY ingestion/requirements.txt .
+COPY ingestion_pipeline/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application files
-COPY ingestion/api.py ingestion/api.py
+COPY ingestion_pipeline/api.py ingestion_pipeline/api.py
 
 # Run the application
-CMD ["python", "ingestion/api.py"]
+CMD ["python", "ingestion_pipeline/api.py"]
