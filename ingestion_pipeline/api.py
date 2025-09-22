@@ -132,12 +132,8 @@ class DataPipeline:
             logger.info("Starting Data Pipeline")
             logger.info("=" * 50)
 
-            # Fetch data
-            payload = self.fetch_data()
-            fetched_at = datetime.now(timezone.utc).isoformat()
-            source_url = self.build_source_url(LOCATION, DATE)
-
             # Check if data already exists
+            source_url = self.build_source_url(LOCATION, DATE)
             if self.record_exists(source_url):
                 logger.info("Data already exists in BigQuery. Skipping insert.")
                 return {
@@ -146,6 +142,10 @@ class DataPipeline:
                     "location": LOCATION,
                     "date": DATE,
                 }
+
+            # Fetch data
+            payload = self.fetch_data()
+            fetched_at = datetime.now(timezone.utc).isoformat()
 
             # Upload to BigQuery
             logger.info("Writing to BigQuery")
