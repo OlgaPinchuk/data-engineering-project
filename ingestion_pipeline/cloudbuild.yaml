@@ -4,7 +4,7 @@ steps:
     args: [
       'build', 
       '-t', '${_AR_REPO}/weather-job:$BUILD_ID',
-      '-f', 'ingestion/Dockerfile',
+      '-f', 'ingestion_pipeline/Dockerfile',
       '.'
     ]
  
