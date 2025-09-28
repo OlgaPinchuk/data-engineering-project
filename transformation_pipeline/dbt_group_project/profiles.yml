@@ -8,7 +8,7 @@ dbt_group_project:
       #keyfile: /home/mariia/data-engineering-project2/dbt_project/team-weather-ml-project-service-account-key.json
       #keyfile: "{{ env_var('DBT_KEY') }}"
       location: EU
-      method: service-account
+      method: oauth
       priority: interactive
       project: team-weather-ml-project
       threads: 4
