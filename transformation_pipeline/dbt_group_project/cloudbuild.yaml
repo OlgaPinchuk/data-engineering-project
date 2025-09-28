@@ -5,7 +5,7 @@ steps:
       'build', 
       '-t', '${_AR_REPO}/transform-job:$BUILD_ID',
       '-f', 'transformation_pipeline/dbt_group_project/Dockerfile',
-      '.'
+      'transformation_pipeline/dbt_group_project'
     ]
  
   - name: 'gcr.io/cloud-builders/docker'
