@@ -28,6 +28,7 @@ steps:
       - '--task-timeout=600'
 
 substitutions:
+  # ignore for now
   _AR_REPO: 'europe-north2-docker.pkg.dev/team-weather-ml-project/ingestion-pipeline'
   _REGION: 'europe-north2'
   _LOCATION: 'Stockholm'
