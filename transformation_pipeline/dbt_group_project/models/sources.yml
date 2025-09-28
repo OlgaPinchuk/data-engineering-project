@@ -1,0 +1,9 @@
+version: 2
+
+sources:
+  - name: raw
+    database: team-weather-ml-project   # your GCP project
+    schema: team_weather_ml_raw         # BigQuery dataset containing raw JSON
+    tables:
+      - name: weather_data              # raw table with JSON
+
