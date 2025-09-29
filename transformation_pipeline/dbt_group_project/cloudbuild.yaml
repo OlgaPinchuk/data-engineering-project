@@ -22,7 +22,7 @@ steps:
       - 'weather-transorm-job-${_ENVIRONMENT}'
       - '--image=${_AR_REPO}/transform-job:$BUILD_ID'
       - '--region=${_REGION}'
-      - '--service-account=team-weather-ml-project@appspot.gserviceaccount.com'
+      - '--service-account=team-weather-ml-sa@team-weather-ml-project.iam.gserviceaccount.com'
       - '--cpu=1'
       - '--memory=512Mi'
       - '--task-timeout=600'
