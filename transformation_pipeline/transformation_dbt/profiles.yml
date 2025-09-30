@@ -1,0 +1,13 @@
+transformation_dbt:
+  outputs:
+    dev:
+      dataset: dbt_transformed_data
+      job_execution_timeout_seconds: 300
+      job_retries: 1
+      location: EU
+      method: oauth
+      priority: interactive
+      project: team-weather-ml-project
+      threads: 60
+      type: bigquery
+  target: dev
