@@ -1,0 +1,9 @@
+FROM python:3.11-slim
+WORKDIR /app
+RUN pip install --no-cache-dir dbt-bigquery==1.8.3
+# copy dbt project
+COPY . .
+# dbt will look here
+ENV DBT_PROFILES_DIR=/app
+# default command; override in job args if needed
+CMD ["bash", "-lc", "dbt run --select stg_weather_data+ processed_weather_data"]
