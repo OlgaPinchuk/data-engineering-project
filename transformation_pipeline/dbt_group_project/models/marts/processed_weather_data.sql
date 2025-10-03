@@ -17,23 +17,20 @@ WITH base AS (
 -- Compute lag features
 lagged AS (
     SELECT
-        *,
+        * ,
         LAG(temp, 1) OVER (ORDER BY dt_iso, hour) AS temp_lag_1,
         LAG(temp, 3) OVER (ORDER BY dt_iso, hour) AS temp_lag_3
     FROM base
-),
-
--- Compute target: max temp of next 24 hours
-target AS (
-    SELECT
-        *,
-        MAX(temp) OVER (
-            ORDER BY dt_iso, hour
-            ROWS BETWEEN 1 FOLLOWING AND 24 FOLLOWING
-        ) AS target_temp
-    FROM lagged
 )
 
-SELECT *
-FROM target
+SELECT
+    dt_iso,
+    hour,
+    month,
+    temp,
+    humidity,
+    pressure,
+    temp_lag_1,
+    temp_lag_3
+FROM lagged
 ORDER BY dt_iso, hour
