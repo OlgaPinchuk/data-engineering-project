@@ -2,3 +2,6 @@ google-cloud-storage==3.4.0
 python-dotenv==1.1.1
 requests==2.31.0
 joblib== 1.5.2
+gcsfs==2025.9.0
+pandas==2.3.2
+pandas-gbq==0.29.2
