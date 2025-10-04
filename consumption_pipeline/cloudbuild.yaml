@@ -36,7 +36,7 @@ substitutions:
   _PROJECT_ID: 'team-weather-ml-project'
   _ENVIRONMENT: 'prod'
   _BQ_PREDICT_INPUT_TABLE_NAME: processed_weather_data
-  _BQ_PREDICT_OUTPUT_TABLE_NAME: predicted_weather_data
+  _BQ_PREDICT_OUTPUT_TABLE_NAME: predicted_weather_data  # will add environment suffix
 
 options:
   logging: CLOUD_LOGGING_ONLY
