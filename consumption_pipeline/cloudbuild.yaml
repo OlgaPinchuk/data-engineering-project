@@ -1,0 +1,42 @@
+steps:
+  
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [
+      'build', 
+      '-t', '${_AR_REPO}/predict-job:$BUILD_ID',
+      '-f', 'consumption_pipeline/Dockerfile',
+      '.'
+    ]
+ 
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [
+      'push', 
+      '${_AR_REPO}/predict-job:$BUILD_ID'
+    ]
+
+  - name: 'gcr.io/cloud-builders/gcloud'
+    args:
+      - 'run'
+      - 'jobs'
+      - 'deploy'
+      - 'weather-predict-job-${_ENVIRONMENT}'
+      - '--image=${_AR_REPO}/weather-job:$BUILD_ID'
+      - '--region=${_REGION}'
+      - '--set-env-vars=LOCATION=${_LOCATION},BQ_DATASET_ID=${_BQ_DATASET},BQ_PREDICT_INPUT_TABLE_NAME=${_BQ_PREDICT_INPUT_TABLE_NAME}-${_ENVIRONMENT},GCP_PROJECT_ID=${_PROJECT_ID},BQ_PREDICT_OUTPUT_TABLE_NAME=${_BQ_PREDICT_OUTPUT_TABLE_NAME}-${_ENVIRONMENT}'
+      - '--set-secrets=API_KEY=API_KEY:latest'
+      - '--cpu=1'
+      - '--memory=512Mi'
+      - '--task-timeout=600'
+
+substitutions:
+  _AR_REPO: 'europe-north2-docker.pkg.dev/team-weather-ml-project/ingestion-pipeline'
+  _REGION: 'europe-north2'
+  _LOCATION: 'Stockholm'
+  _BQ_DATASET: 'dbt_dev_version_2_dbt_data'
+  _PROJECT_ID: 'team-weather-ml-project'
+  _ENVIRONMENT: 'prod'
+  _BQ_PREDICT_INPUT_TABLE_NAME: processed_weather_data
+  _BQ_PREDICT_OUTPUT_TABLE_NAME: predicted_weather_data
+
+options:
+  logging: CLOUD_LOGGING_ONLY

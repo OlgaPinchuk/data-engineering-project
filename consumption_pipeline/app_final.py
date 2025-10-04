@@ -1,3 +1,4 @@
+import os
 import joblib
 import gcsfs
 import pandas as pd
@@ -41,12 +42,19 @@ if __name__ == "__main__":
     # Load model
     model = model_load()
 
+    # table_id for input table
+    project_id = os.environ["GCP_PROJECT_ID"]
+    dataset_id = os.environ["BQ_DATASET_ID"]
+    in_table_name = os.environ["BQ_PREDICT_INPUT_TABLE_NAME"]
+    out_table_name = os.environ["BQ_PREDICT_OUTPUT_TABLE_NAME"]
+    in_table_id = f"{project_id}.{dataset_id}.{in_table_name}"
+
     # Load data
-    project_id = "team-weather-ml-project"
-    table_id = "team-weather-ml-project.dbt_dev_version_2_dbt_data.processed_weather_data"
+    # project_id = "team-weather-ml-project"
+    # table_id = "team-weather-ml-project.dbt_dev_version_2_dbt_data.processed_weather_data"
     columns = ["dt_iso", "hour", "month", "temp", "humidity", "pressure", "temp_lag_1", "temp_lag_3"]
 
-    df = load_data(project_id, table_id, columns)
+    df = load_data(project_id, in_table_id, columns)
 
     # Generate predictions
     df['predicted_temp'] = model_predict(model, df)
@@ -54,4 +62,4 @@ if __name__ == "__main__":
     df = df.sort_values(by=['dt_iso', 'hour']).reset_index(drop=True)
 
     # Save predictions back to BigQuery
-    save_predictions(df, project_id, "dbt_dev_version_2_dbt_data", "predicted_weather_data")
+    save_predictions(df, project_id, dataset_id, out_table_name)
