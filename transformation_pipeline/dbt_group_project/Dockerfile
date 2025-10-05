@@ -6,4 +6,4 @@ COPY . .
 # dbt will look here
 ENV DBT_PROFILES_DIR=/app
 # default command; override in job args if needed
-CMD ["bash", "-lc", "dbt run --select stg_weather_data+ processed_weather_data"]
+CMD ["bash", "-lc", "dbt run --select stg_weather_data+ processed_weather_data target_real_values"]
