@@ -5,8 +5,6 @@ dbt_group_project:
       dataset: dbt_dev
       job_execution_timeout_seconds: 300
       job_retries: 1
-      #keyfile: /home/mariia/data-engineering-project2/dbt_project/team-weather-ml-project-service-account-key.json
-      #keyfile: "{{ env_var('DBT_KEY') }}"
       location: EU
       method: oauth
       priority: interactive
