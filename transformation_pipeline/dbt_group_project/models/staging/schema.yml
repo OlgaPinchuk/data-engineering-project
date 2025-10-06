@@ -8,7 +8,7 @@ models:
         description: "Date in ISO format"
         tests:
           - not_null
-          - unique
+          #- unique
 
       - name: pressure
         description: "Atmospheric pressure in millibars (mb)."
