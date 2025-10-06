@@ -37,3 +37,7 @@ data/processed/*
 
 # Docker
 .dockerignore
+
+# dbt
+.user.yml
+dbt.log

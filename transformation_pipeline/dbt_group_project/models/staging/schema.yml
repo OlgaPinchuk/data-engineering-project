@@ -1,0 +1,26 @@
+version: 2
+
+models:
+  - name: stg_weather_data
+    description: "Staging model for weather data, flattened from raw JSON"
+    columns:
+      - name: dt_iso
+        description: "Date in ISO format"
+        tests:
+          - not_null
+          #- unique
+
+      - name: pressure
+        description: "Atmospheric pressure in millibars (mb)."
+        tests:
+          - not_null
+
+      - name: humidity
+        description: "Relative humidity percentage."
+        tests:
+          - not_null
+
+      - name: temp
+        description: "Observed or forecasted temperature in Celsius."
+        tests:
+          - not_null
