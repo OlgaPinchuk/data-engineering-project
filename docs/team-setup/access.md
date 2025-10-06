@@ -5,7 +5,7 @@
 | Name             | Identity                                           | IAM Role                          | Level   | Description / Notes                     |
 |------------------|----------------------------------------------------|-----------------------------------|---------|-----------------------------------------|
 | Olha Pinchuk     | pinchukolya@gmail.com                              | roles/owner                       | Project | Full access to all resources            |
-| Mariia Sauta     | ugabitan@gmail.com                                 | roles/editor                      | Project | Can create/edit resources across GCP    |
+| Mariia Sauta     | ugabitan@gmail.com                                 | roles/owner                       | Project | Can create/edit resources across GCP    |
 |                  |                                                    | roles/storage.objectAdmin         | Project | Full control over Cloud Storage objects |
 
 --
